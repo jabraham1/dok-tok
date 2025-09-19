@@ -26,7 +26,6 @@
       padding: 15px;
       background: #f1f5f9;
       border-radius: 8px;
-      min-height: 80px;
     }
     button {
       background: #4CAF50;
@@ -61,6 +60,10 @@
     const labFile = document.getElementById("labFile");
     const results = document.getElementById("results");
 
+    // Dynamically detect base path (e.g. /ajj-dqf-zoh)
+    const basePath = "/" + window.location.pathname.split("/")[1];
+    const apiUrl = `${basePath}/analyze`;
+
     analyzeBtn.addEventListener("click", async () => {
       if (labFile.files.length === 0) {
         alert("Please select a file first.");
@@ -75,10 +78,14 @@
       formData.append("file", file);
 
       try {
-        const response = await fetch("analyze", {
+        const response = await fetch(apiUrl, {
           method: "POST",
           body: formData
         });
+
+        if (!response.ok) {
+          throw new Error("Server error: " + response.status);
+        }
 
         const data = await response.json();
         if (data.error) {
