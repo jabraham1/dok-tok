@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Functional Medicine Lab Interpreter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 20px;
+      background: #f7f9fc;
+      color: #333;
+    }
+    h1 { text-align: center; }
+    .card {
+      max-width: 700px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    #results {
+      white-space: pre-wrap;
+      margin-top: 20px;
+      padding: 15px;
+      background: #f1f5f9;
+      border-radius: 8px;
+    }
+    button {
+      background: #4CAF50;
+      color: white;
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    input[type=file] {
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Functional Medicine Lab Interpreter</h1>
+  <div class="card">
+    <p>Upload a lab report (PDF or image). The AI will interpret it in a clear, patient-friendly way:</p>
+    <input type="file" id="labFile" accept=".pdf,.jpg,.jpeg,.png"/>
+    <br/>
+    <button id="analyzeBtn">Analyze Lab Report</button>
+    <div id="results"></div>
+  </div>
+
+  <script>
+    const analyzeBtn = document.getElementById("analyzeBtn");
+    const labFile = document.getElementById("labFile");
+    const results = document.getElementById("results");
+
+    analyzeBtn.addEventListener("click", async () => {
+      if (labFile.files.length === 0) {
+        alert("Please select a file first.");
+        return;
+      }
+
+      const file = labFile.files[0];
+      results.textContent = "Uploading and analyzing...";
+      analyzeBtn.disabled = true;
+
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        const response = await fetch("/analyze", {
+          method: "POST",
+          body: formData
+        });
+
+        const data = await response.json();
+        if (data.error) {
+          results.textContent = "Error: " + data.error;
+        } else {
+          results.textContent = data.result;
+        }
+      } catch (err) {
+        results.textContent = "Error: " + err.message;
+      }
+
+      analyzeBtn.disabled = false;
+    });
+  </script>
+</body>
+</html>

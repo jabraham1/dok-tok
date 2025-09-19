@@ -1,0 +1,17 @@
+
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lab Interpretation Upload</title>
+</head>
+<body>
+    <h2>Upload Your Lab File</h2>
+   <form action="{{ request.scope.get('root_path', '') }}/upload/" 
+      method="post" enctype="multipart/form-data">
+  <input type="file" name="file" />
+  <button type="submit">Upload</button>
+</form>
+</body>
+</html>
